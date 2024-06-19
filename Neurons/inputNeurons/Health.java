@@ -8,7 +8,11 @@ public class Health extends InputNeuron {
     super();
   }
 
-  public void action(Individual individual) {
+  public double getValue(Individual individual) {
+    return individual.getHealth();
+  }
+
+  public void action() {
     System.out.println("Health: " + individual.getHealth());
   }
 }

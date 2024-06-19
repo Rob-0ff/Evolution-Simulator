@@ -1,16 +1,37 @@
 import Individual.Individual;
 import Map.Map;
+import Neurons.hiddenNeurons.HiddenNeuron;
+import Neurons.inputNeurons.InputNeuron;
+import Neurons.outputNeurons.OutputNeuron;
+
+import Neurons.*;
+
+import org.reflections.Reflections;
 
 public class Main {
 
   public static void main(String[] args) {
+    Reflections hiddenReflections = new Reflections("Neurons.hiddenNeurons");
+    Reflections inputReflections = new Reflections("Neurons.inputNeurons");
+    Reflections outputReflections = new Reflections("Neurons.outputNeurons");
+
+    Individual.setHiddenIterator(hiddenReflections.getSubTypesOf(HiddenNeuron.class).iterator());
+    Individual.setInputIterator(inputReflections.getSubTypesOf(InputNeuron.class).iterator());
+    Individual.setOutputIterator(outputReflections.getSubTypesOf(OutputNeuron.class).iterator());
+
     Individual individual = new Individual();
 
-    Map map = new Map();
+    System.out.println("---------------------");
+    individual.getBrain().runBrain();
 
-    map.addIndividual(individual);
+    // System.out.println("Printing brain");
+    // individual.printBrain();
 
-    map.printBoard();
+    // Map map = new Map();
+
+    // map.addIndividual(individual);
+
+    // map.printBoard();
   }
 
 }

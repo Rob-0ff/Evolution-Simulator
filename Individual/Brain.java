@@ -4,51 +4,149 @@ import Neurons.Neuron;
 import Neurons.inputNeurons.*;
 import Neurons.outputNeurons.*;
 import Neurons.hiddenNeurons.*;
+import Neurons.Connection;
 
-import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Brain {
-  ArrayList<Neuron> startingNeurons = new ArrayList<Neuron>();
+  Individual individual;
 
-  // TODO - INDEXING NEEDS TO BE WORKED ON FOR CREATING NEURAL PATHWAYS
-  public Brain(String DNA) {
-    int index1 = 0;
-    int index2 = 2;
+  public Brain(Individual individual) {
+    this.individual = individual;
 
-    while (index2 < DNA.length()) {
-      int neuronType = Integer.parseInt(DNA.substring(index1, index2), 16) % 3;
+    for (String codon : individual.getCodons()) {
+      Neuron start = null;
+      Neuron finish = null;
+      double weight;
 
-      if (neuronType == 0) {
-        startingNeurons.add(createInputNeuron(DNA, index1, index2));
-      } else if (neuronType == 1) {
-        startingNeurons.add(createHiddenNeuron(DNA, index1, index2));
+      int length = codon.length() * 4;
+      String bin = new BigInteger(codon, 16).toString(2);
+      bin = String.format("%" + length + "s", bin).replace(' ', '0');
+
+      String startNeuronType = bin.substring(0, 1);
+      String startNeuronSubClass = bin.substring(1, 6);
+      String finishNeuronType = bin.substring(6, 7);
+      String finishNeuronSubClass = bin.substring(7, 12);
+      String weightSign = bin.substring(12, 13);
+      String weightString = bin.substring(13);
+
+      if (startNeuronType.equals("0")) {
+        start = individual.getInputNeurons()
+            .get(Integer.parseInt(startNeuronSubClass, 2) % InputNeuron.numInputNeurons);
+      } else {
+        start = individual.getHiddenNeurons()
+            .get(Integer.parseInt(startNeuronSubClass, 2) % HiddenNeuron.numHiddenNeurons);
       }
 
-      index1 += 2;
-      index2 += 2;
+      if (finishNeuronType.equals("0")) {
+        finish = individual.getHiddenNeurons()
+            .get(Integer.parseInt(finishNeuronSubClass, 2) % HiddenNeuron.numHiddenNeurons);
+      } else {
+        finish = individual.getOutputNeurons()
+            .get(Integer.parseInt(finishNeuronSubClass, 2) % OutputNeuron.numOutputNeurons);
+      }
+
+      weight = Integer.parseInt(weightString, 2) / 100000.0;
+
+      if (weightSign.equals("0")) {
+        weight *= -1;
+      }
+
+      start.getToNeurons().add(new Connection(finish, weight, true));
+      finish.getFromNeurons().add(new Connection(start, weight, false));
+
+    }
+
+    checkAndRemoveRedundantPaths();
+
+    System.out.println("Input:");
+    for (Neuron n : individual.getInputNeurons()) {
+      for (Connection con : n.getToNeurons()) {
+        System.out.println(n.getClass().getName() + con.toString());
+      }
+      for (Connection con : n.getFromNeurons()) {
+        System.out.println(n.getClass().getName() + con.toString());
+      }
+    }
+
+    System.out.println("Hidden:");
+    for (Neuron n : individual.getHiddenNeurons()) {
+      for (Connection con : n.getToNeurons()) {
+        System.out.println(n.getClass().getName() + con.toString());
+      }
+      for (Connection con : n.getFromNeurons()) {
+        System.out.println(n.getClass().getName() + con.toString());
+      }
     }
   }
 
-  public InputNeuron createInputNeuron(String DNA, int index1, int index2) {
-    int inputType = Integer.parseInt(DNA.substring(index1, index2), 16) % InputNeuron.numInputNeurons;
-
-    switch (inputType) {
-      case 0:
-        return new Health();
-      default:
-        return null;
+  public void checkAndRemoveRedundantPaths() {
+    boolean exit = false;
+    for (HiddenNeuron hn : individual.getHiddenNeurons()) {
+      if (hn.getToNeurons().isEmpty()) {
+        for (Connection con : hn.getFromNeurons()) {
+          for (Connection con2 : con.getNeuron().getToNeurons()) {
+            if (con2.getNeuron() == hn && con2.getWeight() == con.getWeight()) {
+              con.getNeuron().getToNeurons().remove(con2);
+              hn.getFromNeurons().remove(con);
+              exit = true;
+              break;
+            }
+          }
+          if (exit) {
+            exit = false;
+            break;
+          }
+        }
+      }
     }
   }
 
-  public HiddenNeuron createHiddenNeuron(String DNA, int index1, int index2) {
-    int hiddenType = Integer.parseInt(DNA.substring(index1, index2), 16) % HiddenNeuron.numHiddenNeurons;
-
-    switch (hiddenType) {
-      case 0:
-        return new H1();
-      default:
-        return null;
+  public void runBrain() {
+    for (InputNeuron n : individual.getInputNeurons()) {
+      for (Connection con : n.getToNeurons()) {
+        con.getNeuron().addToIntakeValue(n.getValue(individual) * con.getWeight());
+      }
     }
+
+    for (HiddenNeuron n : individual.getHiddenNeurons()) {
+      for (Connection con : n.getToNeurons()) {
+        con.getNeuron().addToIntakeValue(n.getValue(individual) * con.getWeight());
+      }
+    }
+
+    for (HiddenNeuron n : individual.getHiddenNeurons()) {
+      if (sigmoidActivationFunction(n.getIntakeValue())) {
+        for (Connection con : n.getToNeurons()) {
+          con.getNeuron().addToIntakeValue(n.getValue(individual) * con.getWeight());
+        }
+      }
+    }
+
+    for (OutputNeuron n : individual.getOutputNeurons()) {
+      if (sigmoidActivationFunction(n.getIntakeValue())) {
+        n.activate();
+      }
+    }
+
+  }
+
+  public boolean sigmoidActivationFunction(double x) {
+    double sigmoidValue = 1 / 1 - Math.exp(-x);
+
+    if (sigmoidValue < 0.5) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  @Override
+  public String toString() {
+    return "";
   }
 }
