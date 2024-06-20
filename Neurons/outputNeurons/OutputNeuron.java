@@ -10,7 +10,7 @@ public abstract class OutputNeuron extends Neuron {
     super();
   }
 
-  public abstract void activate();
+  public abstract void activate(Individual individual);
 
   public double getValue(Individual individual) {
     return 0;

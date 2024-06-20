@@ -3,39 +3,44 @@ package Individual;
 import Neurons.inputNeurons.*;
 import Neurons.hiddenNeurons.*;
 import Neurons.outputNeurons.*;
+import Map.Map;
 
 import Neurons.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.reflections.Reflections;
+
 public class Individual {
-  static Iterator<Class<? extends HiddenNeuron>> hiddenIterator;
-  static Iterator<Class<? extends OutputNeuron>> outputIterator;
-  static Iterator<Class<? extends InputNeuron>> inputIterator;
+  Iterator<Class<? extends HiddenNeuron>> hiddenIterator;
+  Iterator<Class<? extends OutputNeuron>> outputIterator;
+  Iterator<Class<? extends InputNeuron>> inputIterator;
 
-  public static void setHiddenIterator(Iterator<Class<? extends HiddenNeuron>> hiddenIterator) {
-    Individual.hiddenIterator = hiddenIterator;
+  public void setHiddenIterator(Iterator<Class<? extends HiddenNeuron>> hiddenIterator) {
+    this.hiddenIterator = hiddenIterator;
   }
 
-  public static void setOutputIterator(Iterator<Class<? extends OutputNeuron>> outputIterator) {
-    Individual.outputIterator = outputIterator;
+  public void setOutputIterator(Iterator<Class<? extends OutputNeuron>> outputIterator) {
+    this.outputIterator = outputIterator;
   }
 
-  public static void setInputIterator(Iterator<Class<? extends InputNeuron>> inputIterator) {
-    Individual.inputIterator = inputIterator;
+  public void setInputIterator(Iterator<Class<? extends InputNeuron>> inputIterator) {
+    this.inputIterator = inputIterator;
   }
 
   String DNA = "";
   ArrayList<String> codonArrayList = new ArrayList<String>();
+
+  Map map;
 
   ArrayList<InputNeuron> inputNeurons = new ArrayList<InputNeuron>();
   ArrayList<HiddenNeuron> hiddenNeurons = new ArrayList<HiddenNeuron>();
   ArrayList<OutputNeuron> outputNeurons = new ArrayList<OutputNeuron>();
 
   Brain brain;
-  int xPosition = 0;
-  int yPosition = 0;
+  int xPosition;
+  int yPosition;
 
   double health = 100;
 
@@ -57,9 +62,15 @@ public class Individual {
       codonArrayList.add(DNA.substring(i, i + 8));
     }
 
-    intiateNeuronLists();
+    Reflections hiddenReflections = new Reflections("Neurons.hiddenNeurons");
+    Reflections inputReflections = new Reflections("Neurons.inputNeurons");
+    Reflections outputReflections = new Reflections("Neurons.outputNeurons");
 
-    System.out.println("Creating brain");
+    setHiddenIterator(hiddenReflections.getSubTypesOf(HiddenNeuron.class).iterator());
+    setInputIterator(inputReflections.getSubTypesOf(InputNeuron.class).iterator());
+    setOutputIterator(outputReflections.getSubTypesOf(OutputNeuron.class).iterator());
+
+    intiateNeuronLists();
     brain = new Brain(this);
   }
 
@@ -140,5 +151,15 @@ public class Individual {
 
   public Brain getBrain() {
     return this.brain;
+  }
+
+  public Map getMap() {
+    return this.map;
+  }
+
+  public void setMap(Map map) {
+    this.map = map;
+    this.xPosition = (int) Math.floor(Math.random() * map.getXSize());
+    this.yPosition = (int) Math.floor(Math.random() * map.getYSize());
   }
 }

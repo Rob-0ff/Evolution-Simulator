@@ -1,37 +1,41 @@
 import Individual.Individual;
-import Map.Map;
+import Map.*;
 import Neurons.hiddenNeurons.HiddenNeuron;
 import Neurons.inputNeurons.InputNeuron;
 import Neurons.outputNeurons.OutputNeuron;
-
 import Neurons.*;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.*;
+import java.awt.*;
 
 import org.reflections.Reflections;
 
 public class Main {
 
-  public static void main(String[] args) {
-    Reflections hiddenReflections = new Reflections("Neurons.hiddenNeurons");
-    Reflections inputReflections = new Reflections("Neurons.inputNeurons");
-    Reflections outputReflections = new Reflections("Neurons.outputNeurons");
+  public static void main(String[] args) throws InterruptedException {
+    Map map = new Map();
 
-    Individual.setHiddenIterator(hiddenReflections.getSubTypesOf(HiddenNeuron.class).iterator());
-    Individual.setInputIterator(inputReflections.getSubTypesOf(InputNeuron.class).iterator());
-    Individual.setOutputIterator(outputReflections.getSubTypesOf(OutputNeuron.class).iterator());
+    for (int i = 0; i < 10; i++) {
+      map.clearIndividuals();
 
-    Individual individual = new Individual();
+      System.out.println("---------- " + i + " ---------");
 
-    System.out.println("---------------------");
-    individual.getBrain().runBrain();
+      for (int j = 0; j < 50; j++) {
+        Individual individual = new Individual();
 
-    // System.out.println("Printing brain");
-    // individual.printBrain();
+        map.addIndividual(individual);
+      }
 
-    // Map map = new Map();
+      for (int j = 0; j < 75; j++) {
+        Thread.sleep(250);
 
-    // map.addIndividual(individual);
-
-    // map.printBoard();
+        for (Individual ind : map.getIndividuals()) {
+          ind.getBrain().runBrain();
+        }
+      }
+      System.out.println("------------Restart--------------");
+    }
   }
-
 }

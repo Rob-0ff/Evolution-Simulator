@@ -17,7 +17,6 @@ public abstract class Neuron {
   protected ArrayList<Connection> fromNeurons = new ArrayList<Connection>();
 
   protected Neuron() {
-    System.out.println(this.getClass().getName());
   }
 
   public double getIntakeValue() {

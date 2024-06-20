@@ -129,20 +129,26 @@ public class Brain {
 
     for (OutputNeuron n : individual.getOutputNeurons()) {
       if (sigmoidActivationFunction(n.getIntakeValue())) {
-        n.activate();
+        n.activate(individual);
       }
     }
-
   }
 
   public boolean sigmoidActivationFunction(double x) {
-    double sigmoidValue = 1 / 1 - Math.exp(-x);
+    double tanh = (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
 
-    if (sigmoidValue < 0.5) {
+    if (tanh < 0) {
       return false;
     } else {
       return true;
     }
+    // double sigmoidValue = 1 / 1 - Math.exp(-x);
+
+    // if (sigmoidValue < 0.5) {
+    // return false;
+    // } else {
+    // return true;
+    // }
   }
 
   @Override

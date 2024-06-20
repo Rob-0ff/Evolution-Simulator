@@ -8,7 +8,17 @@ public class MoveWest extends OutputNeuron {
     super();
   }
 
-  public void activate() {
-    System.out.println("Moving west");
+  public void activate(Individual individual) {
+    try {
+      if (individual.getXPosition() != 0
+          && individual.getMap().getBoard()[individual.getXPosition() - 1][individual.getYPosition()] != 'O') {
+        int oldX = individual.getXPosition();
+        int oldY = individual.getYPosition();
+        individual.setXPosition(individual.getXPosition() - 1);
+
+        individual.getMap().update(oldX, oldY, individual);
+      }
+    } catch (Exception e) {
+    }
   }
 }
