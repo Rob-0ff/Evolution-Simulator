@@ -11,7 +11,8 @@ public class MoveSouth extends OutputNeuron {
   public void activate(Individual individual) {
     try {
       if (individual.getYPosition() != individual.getMap().getYSize() - 1
-          && individual.getMap().getBoard()[individual.getXPosition()][individual.getYPosition() + 1] != 'O') {
+          && individual.getMap().getBoard()[individual.getXPosition()][individual.getYPosition() + 1] != individual
+              .getMap().individualRep) {
         int oldX = individual.getXPosition();
         int oldY = individual.getYPosition();
 

@@ -11,8 +11,10 @@ import javax.swing.JPanel;
 import Individual.Individual;
 
 public class Map {
-  int xSize = 40;
-  int ySize = 40;
+  int xSize = 100;
+  int ySize = 100;
+
+  public char individualRep = 'o';
 
   char[][] board = new char[xSize][ySize];
 
@@ -56,7 +58,7 @@ public class Map {
   public void addIndividual(Individual individual) {
     individuals.add(individual);
 
-    board[individual.getXPosition()][individual.getYPosition()] = 'O';
+    board[individual.getXPosition()][individual.getYPosition()] = individualRep;
 
     individual.setMap(this);
 
@@ -66,7 +68,7 @@ public class Map {
   public void update(int oldXPos, int oldYPos, Individual individual) {
     board[oldXPos][oldYPos] = ' ';
 
-    board[individual.getXPosition()][individual.getYPosition()] = 'O';
+    board[individual.getXPosition()][individual.getYPosition()] = individualRep;
 
     ((Array2DPanel) panel).updateArray();
   }
@@ -91,7 +93,7 @@ class Array2DPanel extends JPanel {
 
   public Array2DPanel(char[][] array) {
     this.array = array;
-    setPreferredSize(new Dimension(600, 600)); // Set the size of the panel
+    setPreferredSize(new Dimension(800, 800)); // Set the size of the panel
   }
 
   @Override
