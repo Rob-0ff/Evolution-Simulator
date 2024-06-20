@@ -3,8 +3,6 @@ package Neurons;
 import java.util.ArrayList;
 
 import Individual.Individual;
-import Neurons.hiddenNeurons.*;
-import Neurons.outputNeurons.*;
 
 public abstract class Neuron {
 

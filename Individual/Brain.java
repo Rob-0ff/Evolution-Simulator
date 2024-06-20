@@ -6,11 +6,7 @@ import Neurons.outputNeurons.*;
 import Neurons.hiddenNeurons.*;
 import Neurons.Connection;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 
 public class Brain {
   Individual individual;

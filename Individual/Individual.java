@@ -5,8 +5,6 @@ import Neurons.hiddenNeurons.*;
 import Neurons.outputNeurons.*;
 import Map.Map;
 
-import Neurons.*;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 

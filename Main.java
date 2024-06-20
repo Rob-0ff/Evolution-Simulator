@@ -1,16 +1,5 @@
 import Individual.Individual;
 import Map.*;
-import Neurons.hiddenNeurons.HiddenNeuron;
-import Neurons.inputNeurons.InputNeuron;
-import Neurons.outputNeurons.OutputNeuron;
-import Neurons.*;
-
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.*;
-import java.awt.*;
-
-import org.reflections.Reflections;
 
 public class Main {
 
