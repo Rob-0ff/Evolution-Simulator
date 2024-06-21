@@ -11,12 +11,12 @@ import javax.swing.JPanel;
 import Individual.Individual;
 
 public class Map {
-  int xSize = 100;
-  int ySize = 100;
+  int xSize = 75;
+  int ySize = 75;
 
-  public char individualRep = 'o';
+  public static String individualRep = "\u26AB";
 
-  char[][] board = new char[xSize][ySize];
+  Cell[][] board = new Cell[xSize][ySize];
 
   ArrayList<Individual> individuals = new ArrayList<Individual>();
   // Create the panel to visualize the array
@@ -24,16 +24,16 @@ public class Map {
 
   public Map() {
 
-    for (int i = 0; i < board.length; i++) {
-      for (int j = 0; j < board[0].length; j++) {
-        board[i][j] = ' ';
+    for (int i = 0; i < xSize; i++) {
+      for (int j = 0; j < ySize; j++) {
+        board[i][j] = new Cell(this, i, j);
       }
     }
 
     JDialog dialog = new JDialog();
     dialog.setTitle("2D Array Visualization");
     dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-    dialog.setBackground(new Color(0, 0, 0));
+    dialog.setBackground(new Color(255, 255, 255));
     dialog.add(panel);
     dialog.pack();
     dialog.setVisible(true);
@@ -57,29 +57,33 @@ public class Map {
   }
 
   public void addIndividual(Individual individual) {
-    individuals.add(individual);
+    while (true) {
+      int tempX = (int) Math.floor(Math.random() * xSize);
+      int tempY = (int) Math.floor(Math.random() * ySize);
 
-    board[individual.getXPosition()][individual.getYPosition()] = individualRep;
-
-    individual.setMap(this);
-
-    ((Array2DPanel) panel).updateArray();
-  }
-
-  public void update(int oldXPos, int oldYPos, Individual individual) {
-    board[oldXPos][oldYPos] = ' ';
-
-    board[individual.getXPosition()][individual.getYPosition()] = individualRep;
+      if (board[tempX][tempY].setIndividual(individual)) {
+        individuals.add(individual);
+        break;
+      }
+    }
 
     ((Array2DPanel) panel).updateArray();
+
   }
 
-  public char[][] getBoard() {
+  public Cell[][] getBoard() {
     return board;
   }
 
   public void clearIndividuals() {
-    board = new char[xSize][ySize];
+    board = new Cell[xSize][ySize];
+
+    for (int i = 0; i < xSize; i++) {
+      for (int j = 0; j < ySize; j++) {
+        board[i][j] = new Cell(this, i, j);
+      }
+    }
+
     individuals.clear();
     ((Array2DPanel) panel).clearArray(board);
   }
@@ -87,14 +91,22 @@ public class Map {
   public ArrayList<Individual> getIndividuals() {
     return this.individuals;
   }
+
+  public Array2DPanel getPanel() {
+    return ((Array2DPanel) panel);
+  }
+
+  public void updatePanel() {
+    ((Array2DPanel) panel).updateArray();
+  }
 }
 
 class Array2DPanel extends JPanel {
-  private char[][] array;
+  private Cell[][] array;
 
-  public Array2DPanel(char[][] array) {
+  public Array2DPanel(Cell[][] array) {
     this.array = array;
-    setPreferredSize(new Dimension(800, 800)); // Set the size of the panel
+    setPreferredSize(new Dimension(700, 700)); // Set the size of the panel
   }
 
   @Override
@@ -103,13 +115,13 @@ class Array2DPanel extends JPanel {
     drawArray(g, array);
   }
 
-  private void drawArray(Graphics g, char[][] array) {
+  private void drawArray(Graphics g, Cell[][] array) {
     int panelWidth = getWidth();
     int panelHeight = getHeight();
     int rows = array.length;
     int cols = array[0].length;
-    int cellWidth = panelWidth / cols;
-    int cellHeight = panelHeight / rows;
+    int cellWidth = (panelWidth / cols);
+    int cellHeight = (panelHeight / rows);
 
     // Draw the grid representing the array
     for (int i = 0; i < rows; i++) {
@@ -121,14 +133,18 @@ class Array2DPanel extends JPanel {
         g.setColor(Color.WHITE);
         g.drawRect(x, y, cellWidth, cellHeight);
 
-        // Draw the character inside the cell
-        g.setColor(Color.BLACK);
-        g.drawString(String.valueOf(array[i][j]), x + cellWidth / 2 - 4, y + cellHeight / 2 + 4);
+        if (array[i][j].getIndividual() != null) {
+          g.setColor(new Color((i * 25) % 256, (j * 25) % 256, ((i * j) / 4) % 256));
+          g.drawString(Map.individualRep, x + cellWidth / 2 - 4,
+              y + cellHeight / 2 + 4);
+        } else {
+          g.drawString(" ", x + cellWidth / 2 - 4, y + cellHeight / 2 + 4);
+        }
       }
     }
   }
 
-  public void clearArray(char[][] newArray) {
+  public void clearArray(Cell[][] newArray) {
     array = newArray;
     updateArray();
   }

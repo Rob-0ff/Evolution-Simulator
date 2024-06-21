@@ -10,14 +10,13 @@ public class MoveSouth extends OutputNeuron {
 
   public void activate(Individual individual) {
     try {
-      if (individual.getYPosition() != individual.getMap().getYSize() - 1
-          && individual.getMap().getBoard()[individual.getXPosition()][individual.getYPosition() + 1] != individual
-              .getMap().individualRep) {
+      if (individual.getXPosition() != individual.getMap().getYSize() - 1) {
         int oldX = individual.getXPosition();
         int oldY = individual.getYPosition();
 
-        individual.setYPosition(individual.getYPosition() + 1);
-        individual.getMap().update(oldX, oldY, individual);
+        if (individual.getMap().getBoard()[oldX][oldY + 1].setIndividual(individual)) {
+          individual.getMap().getBoard()[oldX][oldY].removeIndividual();
+        }
       }
     } catch (Exception e) {
 

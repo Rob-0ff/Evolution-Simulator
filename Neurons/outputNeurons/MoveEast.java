@@ -10,15 +10,13 @@ public class MoveEast extends OutputNeuron {
 
   public void activate(Individual individual) {
     try {
-      if (individual.getXPosition() != individual.getMap().getXSize() - 1
-          && individual.getMap().getBoard()[individual.getXPosition() + 1][individual.getYPosition()] != individual
-              .getMap().individualRep) {
+      if (individual.getXPosition() != individual.getMap().getXSize() - 1) {
         int oldX = individual.getXPosition();
         int oldY = individual.getYPosition();
 
-        individual.setXPosition(individual.getXPosition() + 1);
-
-        individual.getMap().update(oldX, oldY, individual);
+        if (individual.getMap().getBoard()[oldX + 1][oldY].setIndividual(individual)) {
+          individual.getMap().getBoard()[oldX][oldY].removeIndividual();
+        }
       }
     } catch (Exception e) {
     }

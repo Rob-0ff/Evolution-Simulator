@@ -3,6 +3,7 @@ package Individual;
 import Neurons.inputNeurons.*;
 import Neurons.hiddenNeurons.*;
 import Neurons.outputNeurons.*;
+import Map.Cell;
 import Map.Map;
 
 import java.util.ArrayList;
@@ -37,8 +38,7 @@ public class Individual {
   ArrayList<OutputNeuron> outputNeurons = new ArrayList<OutputNeuron>();
 
   Brain brain;
-  int xPosition;
-  int yPosition;
+  Cell currentCell;
 
   double health = 100;
 
@@ -47,7 +47,8 @@ public class Individual {
 
   static int connections = 4;
 
-  public Individual() {
+  public Individual(Map map) {
+    this.map = map;
     for (int i = 0; i < 8 * connections; i++) {
       if (Math.random() < 0.5)
         DNA += hexDigits[(int) (Math.random() * 10)];
@@ -81,23 +82,23 @@ public class Individual {
   }
 
   public int getXPosition() {
-    return xPosition;
+    return currentCell.getX();
   }
 
   public int getYPosition() {
-    return yPosition;
-  }
-
-  public void setXPosition(int xPosition) {
-    this.xPosition = xPosition;
-  }
-
-  public void setYPosition(int yPosition) {
-    this.yPosition = yPosition;
+    return currentCell.getX();
   }
 
   public double getHealth() {
     return health;
+  }
+
+  public void setCell(Cell cell) {
+    this.currentCell = cell;
+  }
+
+  public Cell getCell() {
+    return this.currentCell;
   }
 
   public void printBrain() {
@@ -157,7 +158,5 @@ public class Individual {
 
   public void setMap(Map map) {
     this.map = map;
-    this.xPosition = (int) Math.floor(Math.random() * map.getXSize());
-    this.yPosition = (int) Math.floor(Math.random() * map.getYSize());
   }
 }
