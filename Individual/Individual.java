@@ -45,10 +45,10 @@ public class Individual {
   static String[] hexLetters = new String[] { "A", "B", "C", "D", "E", "F" };
   static String[] hexDigits = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
-  static int brainSize = 15;
+  static int connections = 4;
 
   public Individual() {
-    for (int i = 0; i < 8 * brainSize; i++) {
+    for (int i = 0; i < 8 * connections; i++) {
       if (Math.random() < 0.5)
         DNA += hexDigits[(int) (Math.random() * 10)];
       else {
@@ -105,7 +105,7 @@ public class Individual {
   }
 
   public int getBrainSize() {
-    return brainSize;
+    return connections;
   }
 
   public void intiateNeuronLists() {

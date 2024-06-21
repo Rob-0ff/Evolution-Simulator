@@ -11,14 +11,14 @@ public class Main {
 
       System.out.println("---------- " + i + " ---------");
 
-      for (int j = 0; j < 50; j++) {
+      for (int j = 0; j < 300; j++) {
         Individual individual = new Individual();
 
         map.addIndividual(individual);
       }
 
       for (int j = 0; j < 75; j++) {
-        Thread.sleep(250);
+        Thread.sleep(75);
 
         for (Individual ind : map.getIndividuals()) {
           ind.getBrain().runBrain();

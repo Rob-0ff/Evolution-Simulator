@@ -33,6 +33,7 @@ public class Map {
     JDialog dialog = new JDialog();
     dialog.setTitle("2D Array Visualization");
     dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    dialog.setBackground(new Color(0, 0, 0));
     dialog.add(panel);
     dialog.pack();
     dialog.setVisible(true);
@@ -117,7 +118,7 @@ class Array2DPanel extends JPanel {
         int y = i * cellHeight;
 
         // Draw the cell border
-        g.setColor(Color.BLACK);
+        g.setColor(Color.WHITE);
         g.drawRect(x, y, cellWidth, cellHeight);
 
         // Draw the character inside the cell
