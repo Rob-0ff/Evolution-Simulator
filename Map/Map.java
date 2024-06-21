@@ -3,6 +3,7 @@ package Map;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.math.BigInteger;
 import java.util.ArrayList;
 
 import javax.swing.JDialog;
@@ -134,7 +135,8 @@ class Array2DPanel extends JPanel {
         g.drawRect(x, y, cellWidth, cellHeight);
 
         if (array[i][j].getIndividual() != null) {
-          g.setColor(new Color((i * 25) % 256, (j * 25) % 256, ((i * j) / 4) % 256));
+          g.setColor(new Color(array[i][j].getIndividual().getRGB()[0], array[i][j].getIndividual().getRGB()[1],
+              array[i][j].getIndividual().getRGB()[1]));
           g.drawString(Map.individualRep, x + cellWidth / 2 - 4,
               y + cellHeight / 2 + 4);
         } else {

@@ -2,6 +2,7 @@ package Neurons.outputNeurons;
 
 import Individual.Individual;
 
+//Originally movenorth
 public class MoveWest extends OutputNeuron {
 
   public MoveWest() {
@@ -10,11 +11,11 @@ public class MoveWest extends OutputNeuron {
 
   public void activate(Individual individual) {
     try {
-      if (individual.getXPosition() != 0) {
+      if (individual.getYPosition() != 0) {
         int oldX = individual.getXPosition();
         int oldY = individual.getYPosition();
 
-        if (individual.getMap().getBoard()[oldX - 1][oldY].setIndividual(individual)) {
+        if (individual.getMap().getBoard()[oldX][oldY - 1].setIndividual(individual)) {
           individual.getMap().getBoard()[oldX][oldY].removeIndividual();
         }
       }
