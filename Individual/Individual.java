@@ -6,13 +6,17 @@ import Neurons.outputNeurons.*;
 import Map.Cell;
 import Map.Map;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 import org.reflections.Reflections;
 
-public class Individual {
+public class Individual extends Thread {
+  static int numSteps = 200;
+  CyclicBarrier barrier;
+
   Iterator<Class<? extends HiddenNeuron>> hiddenIterator;
   Iterator<Class<? extends OutputNeuron>> outputIterator;
   Iterator<Class<? extends InputNeuron>> inputIterator;
@@ -49,7 +53,8 @@ public class Individual {
 
   static int connections = 15;
 
-  public Individual(Map map) {
+  public Individual(Map map, CyclicBarrier barrier) {
+    this.barrier = barrier;
     this.map = map;
     for (int i = 0; i < 8 * connections; i++) {
       if (Math.random() < 0.5)
@@ -75,6 +80,23 @@ public class Individual {
 
     intiateNeuronLists();
     brain = new Brain(this);
+  }
+
+  @Override
+  public void run() {
+    try {
+      for (int i = 0; i < numSteps; i++) {
+        // Simulate individual action
+        brain.runBrain();
+        Thread.sleep(100);
+      }
+      barrier.await();
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      e.printStackTrace();
+    } catch (BrokenBarrierException e) {
+      e.printStackTrace();
+    }
   }
 
   private void convertDNAToRGB() {

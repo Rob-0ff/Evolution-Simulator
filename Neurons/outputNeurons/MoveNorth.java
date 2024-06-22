@@ -16,9 +16,7 @@ public class MoveNorth extends OutputNeuron {
         int oldX = individual.getXPosition();
         int oldY = individual.getYPosition();
 
-        if (individual.getMap().getBoard()[oldX - 1][oldY].setIndividual(individual)) {
-          individual.getMap().getBoard()[oldX][oldY].removeIndividual();
-        }
+        individual.getMap().getBoard()[oldX - 1][oldY].setIndividual(individual);
       }
     } catch (Exception e) {
     }

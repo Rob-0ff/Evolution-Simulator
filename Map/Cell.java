@@ -10,6 +10,8 @@ public class Cell {
   double foodLevels;
   Map map;
 
+  boolean statusBusy = false;
+
   Individual currentIndividual;
 
   public Cell(Map map, int xCoord, int yCoord) {
@@ -24,6 +26,8 @@ public class Cell {
 
   public boolean setIndividual(Individual individual) {
     if (this.currentIndividual == null) {
+      if (individual.getCell() != null)
+        individual.getCell().removeIndividual();
       this.currentIndividual = individual;
       individual.setCell(this);
       map.getPanel().updateArray();

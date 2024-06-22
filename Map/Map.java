@@ -3,7 +3,6 @@ package Map;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.math.BigInteger;
 import java.util.ArrayList;
 
 import javax.swing.JDialog;
@@ -12,10 +11,11 @@ import javax.swing.JPanel;
 import Individual.Individual;
 
 public class Map {
-  int xSize = 75;
-  int ySize = 75;
+  int xSize = 100;
+  int ySize = 100;
 
-  public static String individualRep = "\u26AB";
+  // public static String individualRep = "\u26AB";
+  public static String individualRep = "\u2022";
 
   Cell[][] board = new Cell[xSize][ySize];
 

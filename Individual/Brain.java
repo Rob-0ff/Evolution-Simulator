@@ -119,6 +119,10 @@ public class Brain {
       if (sigmoidActivationFunction(n.getIntakeValue())) {
         for (Connection con : n.getToNeurons()) {
           con.getNeuron().addToIntakeValue(n.getValue(individual) * con.getWeight());
+
+          if (con.getNeuron() instanceof HiddenNeuron) {
+            ((HiddenNeuron) con.getNeuron()).addToMemory(n.getValue(individual) * con.getWeight());
+          }
         }
       }
     }

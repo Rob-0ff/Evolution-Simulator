@@ -7,16 +7,18 @@ public abstract class HiddenNeuron extends Neuron {
 
   public static int numHiddenNeurons = 2;
 
-  double initialValue;
+  double memory;
 
   public HiddenNeuron() {
     super();
-
-    this.initialValue = Math.random();
   }
 
   public double getValue(Individual individual) {
     return 0;
+  }
+
+  public void addToMemory(double memory) {
+    this.memory += memory;
   }
 
   @Override
