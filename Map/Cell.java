@@ -10,8 +10,6 @@ public class Cell {
   double foodLevels;
   Map map;
 
-  boolean statusBusy = false;
-
   Individual currentIndividual;
 
   public Cell(Map map, int xCoord, int yCoord) {
@@ -24,7 +22,7 @@ public class Cell {
     this.map = map;
   }
 
-  public boolean setIndividual(Individual individual) {
+  synchronized public boolean setIndividual(Individual individual) {
     if (this.currentIndividual == null) {
       if (individual.getCell() != null)
         individual.getCell().removeIndividual();
@@ -37,7 +35,7 @@ public class Cell {
     return false;
   }
 
-  public void removeIndividual() {
+  synchronized public void removeIndividual() {
     this.currentIndividual = null;
   }
 

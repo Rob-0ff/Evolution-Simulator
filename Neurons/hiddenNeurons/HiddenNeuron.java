@@ -17,6 +17,11 @@ public abstract class HiddenNeuron extends Neuron {
     return 0;
   }
 
+  @Override
+  public double getIntakeValue() {
+    return memory + super.getIntakeValue();
+  }
+
   public void addToMemory(double memory) {
     this.memory += memory;
   }

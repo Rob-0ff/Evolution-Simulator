@@ -1,6 +1,3 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CyclicBarrier;
@@ -9,9 +6,10 @@ import Individual.Individual;
 import Map.*;
 
 public class Main {
-  static int numIndividuals = 150;
+  static int numIndividuals = 30;
   static Map map = new Map();
-  static CyclicBarrier newBarrier = new CyclicBarrier(numIndividuals, () -> limitReached(map));
+  static CyclicBarrier startingBarrier = new CyclicBarrier(numIndividuals);
+  static CyclicBarrier completedBarrier = new CyclicBarrier(numIndividuals, () -> limitReached(map));
 
   public static void main(String[] args) throws InterruptedException {
 
@@ -22,10 +20,12 @@ public class Main {
       // Create new Individuals for each iteration
       List<Individual> individuals = new ArrayList<>();
       for (int j = 0; j < numIndividuals; j++) {
-        Individual individual = new Individual(map, newBarrier);
+        Individual individual = new Individual(map, startingBarrier, completedBarrier);
         individuals.add(individual);
         map.addIndividual(individual);
       }
+
+      // map.visualiseNeuralNetwork();
 
       // Start all individuals
       for (Individual ind : individuals) {

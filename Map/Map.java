@@ -1,27 +1,33 @@
 package Map;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import Individual.Individual;
+import Neurons.hiddenNeurons.HiddenNeuron;
+import Neurons.inputNeurons.InputNeuron;
+import Neurons.outputNeurons.OutputNeuron;
 
 public class Map {
-  int xSize = 100;
-  int ySize = 100;
+  int xSize = 50;
+  int ySize = 50;
 
-  // public static String individualRep = "\u26AB";
-  public static String individualRep = "\u2022";
+  public static String individualRep = "\u26AB";
+  // public static String individualRep = "\u2022";
 
   Cell[][] board = new Cell[xSize][ySize];
 
   ArrayList<Individual> individuals = new ArrayList<Individual>();
-  // Create the panel to visualize the array
   JPanel panel = new Array2DPanel(board);
+  JDialog dialog = new JDialog();
+  InfoPanel infoPanel;
 
   public Map() {
 
@@ -31,7 +37,6 @@ public class Map {
       }
     }
 
-    JDialog dialog = new JDialog();
     dialog.setTitle("2D Array Visualization");
     dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     dialog.setBackground(new Color(255, 255, 255));
@@ -72,6 +77,12 @@ public class Map {
 
   }
 
+  public void visualiseNeuralNetwork() {
+    dialog.setSize(new Dimension(1100, 800));
+    infoPanel = new InfoPanel(this);
+    dialog.add(infoPanel);
+  }
+
   public Cell[][] getBoard() {
     return board;
   }
@@ -99,6 +110,74 @@ public class Map {
 
   public void updatePanel() {
     ((Array2DPanel) panel).updateArray();
+    ((InfoPanel) infoPanel).updatePanel();
+  }
+
+  public void updateInfoPanel() {
+    ((InfoPanel) infoPanel).updatePanel();
+  }
+}
+
+class InfoPanel extends JPanel {
+  Map map;
+  Individual ind;
+
+  public InfoPanel(Map map) {
+    this.map = map;
+    ind = map.getIndividuals().get(0);
+    // super.paintComponent();
+  }
+
+  @Override
+  protected void paintComponent(Graphics g) {
+    Graphics2D g2d = (Graphics2D) g;
+
+    int inputXStartingPos = 850;
+    int inputYStartingPos = 0;
+    int hiddenXStartingPos = 925;
+    int hiddenYStartingPos = 0;
+    int outputXStartingPos = 1000;
+    int outputYStartingPos = 0;
+
+    int neuronSize = 20;
+
+    // Draw input neurons
+    for (InputNeuron neuron : ind.getInputNeurons()) {
+      g2d.fillOval(inputXStartingPos, inputYStartingPos, neuronSize, neuronSize);
+      inputYStartingPos += 30;
+    }
+
+    for (HiddenNeuron neuron : ind.getHiddenNeurons()) {
+      g2d.fillOval(hiddenXStartingPos, hiddenYStartingPos, neuronSize, neuronSize);
+      hiddenYStartingPos += 30;
+    }
+
+    for (OutputNeuron neuron : ind.getOutputNeurons()) {
+      if (neuron.getFiring()) {
+        System.out.println("Firing");
+        g.setColor(new Color(255, 0, 0));
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      } else {
+        g.setColor(new Color(0, 255, 0));
+      }
+      g2d.fillOval(outputXStartingPos, outputYStartingPos, neuronSize, neuronSize);
+      outputYStartingPos += 30;
+    }
+
+    // // Draw connections
+    // for (Connection connection : ind.getBrain().) {
+    // g2d.drawLine(connection.from.x, connection.from.y, connection.to.x,
+    // connection.to.y);
+    // }
+  }
+
+  public void updatePanel() {
+    repaint(); // Repaint the panel to reflect the changes
   }
 }
 

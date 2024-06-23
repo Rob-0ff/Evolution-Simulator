@@ -14,8 +14,7 @@ import java.util.concurrent.CyclicBarrier;
 import org.reflections.Reflections;
 
 public class Individual extends Thread {
-  static int numSteps = 200;
-  CyclicBarrier barrier;
+  static int numSteps = 50;
 
   Iterator<Class<? extends HiddenNeuron>> hiddenIterator;
   Iterator<Class<? extends OutputNeuron>> outputIterator;
@@ -35,6 +34,8 @@ public class Individual extends Thread {
 
   String DNA = "";
   ArrayList<String> codonArrayList = new ArrayList<String>();
+  CyclicBarrier completedBarrier;
+  CyclicBarrier startingBarrier;
 
   Map map;
 
@@ -51,10 +52,11 @@ public class Individual extends Thread {
   static String[] hexLetters = new String[] { "A", "B", "C", "D", "E", "F" };
   static String[] hexDigits = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
-  static int connections = 15;
+  static int connections = 5;
 
-  public Individual(Map map, CyclicBarrier barrier) {
-    this.barrier = barrier;
+  public Individual(Map map, CyclicBarrier startingBarrier, CyclicBarrier completedBarrier) {
+    this.completedBarrier = completedBarrier;
+    this.startingBarrier = startingBarrier;
     this.map = map;
     for (int i = 0; i < 8 * connections; i++) {
       if (Math.random() < 0.5)
@@ -85,12 +87,13 @@ public class Individual extends Thread {
   @Override
   public void run() {
     try {
+      startingBarrier.await();
       for (int i = 0; i < numSteps; i++) {
         // Simulate individual action
         brain.runBrain();
-        Thread.sleep(100);
+        Thread.sleep(125);
       }
-      barrier.await();
+      completedBarrier.await();
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       e.printStackTrace();
