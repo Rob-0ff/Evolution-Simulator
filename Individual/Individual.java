@@ -14,7 +14,7 @@ import java.util.concurrent.CyclicBarrier;
 import org.reflections.Reflections;
 
 public class Individual extends Thread {
-  static int numSteps = 50;
+  static int numSteps = 30;
 
   Iterator<Class<? extends HiddenNeuron>> hiddenIterator;
   Iterator<Class<? extends OutputNeuron>> outputIterator;
@@ -36,6 +36,7 @@ public class Individual extends Thread {
   ArrayList<String> codonArrayList = new ArrayList<String>();
   CyclicBarrier completedBarrier;
   CyclicBarrier startingBarrier;
+  CyclicBarrier midpointBarrier;
 
   Map map;
 
@@ -52,11 +53,14 @@ public class Individual extends Thread {
   static String[] hexLetters = new String[] { "A", "B", "C", "D", "E", "F" };
   static String[] hexDigits = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
-  static int connections = 5;
+  static int connections = 3;
 
-  public Individual(Map map, CyclicBarrier startingBarrier, CyclicBarrier completedBarrier) {
+  public Individual(Map map, CyclicBarrier startingBarrier, CyclicBarrier midpointBarrier,
+      CyclicBarrier completedBarrier) {
     this.completedBarrier = completedBarrier;
     this.startingBarrier = startingBarrier;
+    this.midpointBarrier = midpointBarrier;
+
     this.map = map;
     for (int i = 0; i < 8 * connections; i++) {
       if (Math.random() < 0.5)
@@ -89,8 +93,9 @@ public class Individual extends Thread {
     try {
       startingBarrier.await();
       for (int i = 0; i < numSteps; i++) {
-        // Simulate individual action
         brain.runBrain();
+        brain.clearIntakes();
+        midpointBarrier.await();
         Thread.sleep(125);
       }
       completedBarrier.await();

@@ -1,7 +1,6 @@
 package Map;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -16,8 +15,8 @@ import Neurons.inputNeurons.InputNeuron;
 import Neurons.outputNeurons.OutputNeuron;
 
 public class Map {
-  int xSize = 50;
-  int ySize = 50;
+  int xSize = 30;
+  int ySize = 30;
 
   public static String individualRep = "\u26AB";
   // public static String individualRep = "\u2022";
@@ -112,10 +111,6 @@ public class Map {
     ((Array2DPanel) panel).updateArray();
     ((InfoPanel) infoPanel).updatePanel();
   }
-
-  public void updateInfoPanel() {
-    ((InfoPanel) infoPanel).updatePanel();
-  }
 }
 
 class InfoPanel extends JPanel {
@@ -125,7 +120,6 @@ class InfoPanel extends JPanel {
   public InfoPanel(Map map) {
     this.map = map;
     ind = map.getIndividuals().get(0);
-    // super.paintComponent();
   }
 
   @Override
@@ -139,7 +133,7 @@ class InfoPanel extends JPanel {
     int outputXStartingPos = 1000;
     int outputYStartingPos = 0;
 
-    int neuronSize = 20;
+    int neuronSize = 6;
 
     // Draw input neurons
     for (InputNeuron neuron : ind.getInputNeurons()) {
@@ -156,12 +150,6 @@ class InfoPanel extends JPanel {
       if (neuron.getFiring()) {
         System.out.println("Firing");
         g.setColor(new Color(255, 0, 0));
-        try {
-          Thread.sleep(100);
-        } catch (InterruptedException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
       } else {
         g.setColor(new Color(0, 255, 0));
       }
@@ -177,7 +165,7 @@ class InfoPanel extends JPanel {
   }
 
   public void updatePanel() {
-    repaint(); // Repaint the panel to reflect the changes
+    repaint();
   }
 }
 
@@ -186,7 +174,7 @@ class Array2DPanel extends JPanel {
 
   public Array2DPanel(Cell[][] array) {
     this.array = array;
-    setPreferredSize(new Dimension(700, 700)); // Set the size of the panel
+    setPreferredSize(new Dimension(700, 700));
   }
 
   @Override
@@ -203,13 +191,11 @@ class Array2DPanel extends JPanel {
     int cellWidth = (panelWidth / cols);
     int cellHeight = (panelHeight / rows);
 
-    // Draw the grid representing the array
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < cols; j++) {
         int x = j * cellWidth;
         int y = i * cellHeight;
 
-        // Draw the cell border
         g.setColor(Color.WHITE);
         g.drawRect(x, y, cellWidth, cellHeight);
 
@@ -231,6 +217,6 @@ class Array2DPanel extends JPanel {
   }
 
   public void updateArray() {
-    repaint(); // Repaint the panel to reflect the changes
+    repaint();
   }
 }

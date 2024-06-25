@@ -54,30 +54,31 @@ public class Brain {
 
       start.getToNeurons().add(new Connection(finish, weight, true));
       finish.getFromNeurons().add(new Connection(start, weight, false));
-
     }
 
     checkAndRemoveRedundantPaths();
 
-    System.out.println("Input:");
-    for (Neuron n : individual.getInputNeurons()) {
-      for (Connection con : n.getToNeurons()) {
-        System.out.println(n.getClass().getName() + con.toString());
-      }
-      for (Connection con : n.getFromNeurons()) {
-        System.out.println(n.getClass().getName() + con.toString());
-      }
-    }
+    // System.out.println("Input:");
+    // for (Neuron n : individual.getInputNeurons()) {
+    // for (Connection con : n.getToNeurons()) {
+    // System.out.println(n.getClass().getName() + con.toString());
+    // }
+    // for (Connection con : n.getFromNeurons()) {
+    // System.out.println(n.getClass().getName() + con.toString());
+    // }
+    // }
 
-    System.out.println("Hidden:");
-    for (Neuron n : individual.getHiddenNeurons()) {
-      for (Connection con : n.getToNeurons()) {
-        System.out.println(n.getClass().getName() + con.toString());
-      }
-      for (Connection con : n.getFromNeurons()) {
-        System.out.println(n.getClass().getName() + con.toString());
-      }
-    }
+    // System.out.println("Hidden:");
+    // for (Neuron n : individual.getHiddenNeurons()) {
+    // for (Connection con : n.getToNeurons()) {
+    // System.out.println(n.getClass().getName() + con.toString());
+    // }
+    // for (Connection con : n.getFromNeurons()) {
+    // System.out.println(n.getClass().getName() + con.toString());
+    // }
+    // }
+
+    // System.out.println("####################");
   }
 
   public void checkAndRemoveRedundantPaths() {
@@ -116,39 +117,45 @@ public class Brain {
     }
 
     for (HiddenNeuron n : individual.getHiddenNeurons()) {
-      if (sigmoidActivationFunction(n.getIntakeValue())) {
+      if (activationFunction(n.getIntakeValue())) {
         for (Connection con : n.getToNeurons()) {
-          con.getNeuron().addToIntakeValue(n.getValue(individual) * con.getWeight());
+          con.getNeuron().addToIntakeValue(calculateActivationValue(n.getIntakeValue()) * con.getWeight());
 
           if (con.getNeuron() instanceof HiddenNeuron) {
-            ((HiddenNeuron) con.getNeuron()).addToMemory(n.getValue(individual) * con.getWeight());
+            ((HiddenNeuron) con.getNeuron())
+                .addToMemory(calculateActivationValue(n.getIntakeValue()) * con.getWeight());
           }
         }
       }
     }
 
     for (OutputNeuron n : individual.getOutputNeurons()) {
-      if (sigmoidActivationFunction(n.getIntakeValue())) {
+      if (activationFunction(n.getIntakeValue())) {
         n.activate(individual);
       }
     }
   }
 
-  public boolean sigmoidActivationFunction(double x) {
-    double tanh = (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
+  public void clearIntakes() {
+    for (HiddenNeuron n : individual.getHiddenNeurons()) {
+      n.setIntakeValue(0);
+    }
 
-    if (tanh < 0) {
+    for (OutputNeuron n : individual.getOutputNeurons()) {
+      n.setIntakeValue(0);
+    }
+  }
+
+  public boolean activationFunction(double x) {
+    if (calculateActivationValue(x) < 0) {
       return false;
     } else {
       return true;
     }
-    // double sigmoidValue = 1 / 1 - Math.exp(-x);
+  }
 
-    // if (sigmoidValue < 0.5) {
-    // return false;
-    // } else {
-    // return true;
-    // }
+  public double calculateActivationValue(double val) {
+    return (Math.exp(val) - Math.exp(-1 * val)) / (Math.exp(val) + Math.exp(-1 * val));
   }
 
   @Override

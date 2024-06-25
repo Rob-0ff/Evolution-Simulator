@@ -21,6 +21,10 @@ public abstract class Neuron {
     return this.intakeValue;
   }
 
+  public void setIntakeValue(double value) {
+    this.intakeValue = value;
+  }
+
   public void addToIntakeValue(double val) {
     this.intakeValue += val;
   }
