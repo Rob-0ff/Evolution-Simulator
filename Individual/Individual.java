@@ -14,7 +14,7 @@ import Neurons.inputNeurons.InputNeuron;
 import Neurons.outputNeurons.OutputNeuron;
 
 public class Individual extends Thread {
-  static int numSteps = 30;
+  static int numSteps = 100;
 
   Iterator<Class<? extends HiddenNeuron>> hiddenIterator;
   Iterator<Class<? extends OutputNeuron>> outputIterator;
@@ -39,6 +39,9 @@ public class Individual extends Thread {
   CyclicBarrier startingBarrier;
   CyclicBarrier midpointBarrier;
 
+  public int stepMovementX = 0;
+  public int stepMovementY = 0;
+
   Map map;
 
   ArrayList<InputNeuron> inputNeurons = new ArrayList<InputNeuron>();
@@ -53,7 +56,7 @@ public class Individual extends Thread {
 
   static String[] hexDigits = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F" };
 
-  static int connections = 3;
+  static int connections = 15;
 
   public Individual(Map map, CyclicBarrier startingBarrier, CyclicBarrier midpointBarrier,
       CyclicBarrier completedBarrier) {
