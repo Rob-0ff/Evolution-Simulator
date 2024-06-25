@@ -1,17 +1,17 @@
 package Individual;
 
-import Neurons.inputNeurons.*;
-import Neurons.hiddenNeurons.*;
-import Neurons.outputNeurons.*;
-import Map.Cell;
-import Map.Map;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 import org.reflections.Reflections;
+
+import Map.Cell;
+import Map.Map;
+import Neurons.hiddenNeurons.HiddenNeuron;
+import Neurons.inputNeurons.InputNeuron;
+import Neurons.outputNeurons.OutputNeuron;
 
 public class Individual extends Thread {
   static int numSteps = 30;
@@ -34,6 +34,7 @@ public class Individual extends Thread {
 
   String DNA = "";
   ArrayList<String> codonArrayList = new ArrayList<String>();
+  ArrayList<Integer> codonNumberArrayList = new ArrayList<Integer>();
   CyclicBarrier completedBarrier;
   CyclicBarrier startingBarrier;
   CyclicBarrier midpointBarrier;
@@ -50,8 +51,7 @@ public class Individual extends Thread {
   int[] RGB = new int[3];
   double health = 100;
 
-  static String[] hexLetters = new String[] { "A", "B", "C", "D", "E", "F" };
-  static String[] hexDigits = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+  static String[] hexDigits = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F" };
 
   static int connections = 3;
 
@@ -62,11 +62,21 @@ public class Individual extends Thread {
     this.midpointBarrier = midpointBarrier;
 
     this.map = map;
+    int randomIndex = 0;
+    int codonNumber = 0;
+    Integer codon = 0;
     for (int i = 0; i < 8 * connections; i++) {
-      if (Math.random() < 0.5)
-        DNA += hexDigits[(int) (Math.random() * 10)];
-      else {
-        DNA += hexLetters[(int) (Math.random() * 6)];
+      // generate random number between 0 and 15
+      // * 16, because type coercion floors instead of rounds
+      randomIndex = (int) (Math.random() * 16);
+      DNA += hexDigits[randomIndex];
+      // codonNumberArrayList.add(randomIndex);
+      codon = codon | ((randomIndex & 0xF) << (28 - (codonNumber % 8) * 4));
+
+      ++codonNumber;
+      if (codonNumber % 8 == 0) {
+        codonNumberArrayList.add(codon);
+        codon = 0;
       }
     }
 
@@ -123,6 +133,10 @@ public class Individual extends Thread {
 
   public ArrayList<String> getCodons() {
     return codonArrayList;
+  }
+
+  public ArrayList<Integer> getNumericCodons() {
+    return codonNumberArrayList;
   }
 
   public int getXPosition() {
