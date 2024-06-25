@@ -134,6 +134,16 @@ public class Brain {
         n.activate(individual);
       }
     }
+
+    int tempX = individual.getCell().getX() + individual.stepMovementX;
+    int tempY = individual.getCell().getY() + individual.stepMovementY;
+    if (tempX >= 0 && tempX < individual.getMap().getBoard().length && tempY >= 0
+        && tempY < individual.getMap().getBoard()[0].length)
+      individual.getMap().getBoard()[individual.getCell().getX() + individual.stepMovementX][individual.getCell().getY()
+          + individual.stepMovementY].setIndividual(individual);
+
+    individual.stepMovementX = 0;
+    individual.stepMovementY = 0;
   }
 
   public void clearIntakes() {

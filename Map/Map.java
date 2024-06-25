@@ -15,8 +15,8 @@ import Neurons.inputNeurons.InputNeuron;
 import Neurons.outputNeurons.OutputNeuron;
 
 public class Map {
-  int xSize = 30;
-  int ySize = 30;
+  int xSize = 6;
+  int ySize = 6;
 
   public static String individualRep = "\u26AB";
   // public static String individualRep = "\u2022";

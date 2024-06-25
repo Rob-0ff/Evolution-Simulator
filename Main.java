@@ -7,7 +7,7 @@ import Individual.Individual;
 import Map.*;
 
 public class Main {
-  static int numIndividuals = 60;
+  static int numIndividuals = 16;
   static Map map = new Map();
   static CyclicBarrier startingBarrier = new CyclicBarrier(numIndividuals);
   static CyclicBarrier midpointBarrier = new CyclicBarrier(numIndividuals);
