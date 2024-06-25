@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 
 import Individual.Individual;
-import Map.*;
+import Map.Map;
 
 public class Main {
   static int numIndividuals = 16;
@@ -41,7 +41,14 @@ public class Main {
       for (Individual ind : individuals) {
         ind.join();
       }
-
+      for (Individual ind : individuals) {
+        if (ind.getFitness() > 0) {
+          // TODO: the nasty
+        }
+        else {
+          //TODO: remove
+        }
+      }
       System.out.println("------------Restart--------------");
     }
   }

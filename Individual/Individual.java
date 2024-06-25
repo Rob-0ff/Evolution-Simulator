@@ -19,6 +19,7 @@ public class Individual extends Thread {
   Iterator<Class<? extends HiddenNeuron>> hiddenIterator;
   Iterator<Class<? extends OutputNeuron>> outputIterator;
   Iterator<Class<? extends InputNeuron>> inputIterator;
+  static double hapsburgCoefficient = 0.1;
 
   public void setHiddenIterator(Iterator<Class<? extends HiddenNeuron>> hiddenIterator) {
     this.hiddenIterator = hiddenIterator;
@@ -101,6 +102,44 @@ public class Individual extends Thread {
     brain = new Brain(this);
   }
 
+  // Copy constructor
+  public Individual(Individual urMum) {
+    this.completedBarrier = urMum.completedBarrier;
+    this.startingBarrier = urMum.startingBarrier;
+    this.midpointBarrier = urMum.midpointBarrier;
+
+    this.map = urMum.map;
+    this.DNA = urMum.DNA;
+
+    convertDNAToRGB();
+
+    for (int i = 0; i < urMum.codonNumberArrayList.size(); ++i) {
+      codonNumberArrayList.add(urMum.codonNumberArrayList.get(i));
+    }
+    mootate();
+    Reflections hiddenReflections = new Reflections("Neurons.hiddenNeurons");
+    Reflections inputReflections = new Reflections("Neurons.inputNeurons");
+    Reflections outputReflections = new Reflections("Neurons.outputNeurons");
+
+    setHiddenIterator(hiddenReflections.getSubTypesOf(HiddenNeuron.class).iterator());
+    setInputIterator(inputReflections.getSubTypesOf(InputNeuron.class).iterator());
+    setOutputIterator(outputReflections.getSubTypesOf(OutputNeuron.class).iterator());
+
+    intiateNeuronLists();
+    brain = new Brain(this);
+  }
+
+  private void mootate() {
+    if (Math.random() > hapsburgCoefficient) {
+      return;
+    }
+    int mutationCodon = (int) (Math.random() * codonNumberArrayList.size());
+    int mutationBit = (int) (Math.random() * 31);
+    int mutationMask = 1 << mutationBit;
+    // XOR the bit with the mask to flip it
+    codonNumberArrayList.set(mutationCodon, codonNumberArrayList.get(mutationCodon) ^ mutationMask);
+  }
+
   @Override
   public void run() {
     try {
@@ -119,7 +158,7 @@ public class Individual extends Thread {
       e.printStackTrace();
     }
   }
-
+  
   private void convertDNAToRGB() {
     String rHex = DNA.substring(0, 2);
     String gHex = DNA.substring(2, 4);
@@ -223,5 +262,10 @@ public class Individual extends Thread {
 
   public void setMap(Map map) {
     this.map = map;
+  }
+
+  public double getFitness() {
+    // TODO: Implement properly
+    return 0;
   }
 }
