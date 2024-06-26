@@ -53,7 +53,7 @@ public class Individual extends Thread {
   int[] RGB = new int[3];
   double health = 100;
   int age = 0;
-  int orientation = 0;
+  int orientation = 4;
 
   static String[] hexLetters = new String[] { "A", "B", "C", "D", "E", "F" };
   static String[] hexDigits = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -171,8 +171,12 @@ public class Individual extends Thread {
     this.map = map;
   }
 
-  public int getOrientation() {
+  public int getRawOrientation() {
     return orientation;
+  }
+
+  public int getOrientation() {
+    return Math.abs(orientation) % 8;
   }
 
   public void setOrientation(int orientation) {
