@@ -8,6 +8,7 @@ public class Cell {
 
   double lightLevels;
   double foodLevels;
+  double pheromones;
   Map map;
 
   Individual currentIndividual;
@@ -18,6 +19,7 @@ public class Cell {
 
     lightLevels = Math.random();
     foodLevels = Math.random();
+    pheromones = 0;
 
     this.map = map;
   }
@@ -49,5 +51,21 @@ public class Cell {
 
   public int getY() {
     return this.yCoord;
+  }
+
+  public double getLightLevels() {
+    return this.lightLevels;
+  }
+
+  public double getFoodLevels() {
+    return this.foodLevels;
+  }
+
+  public double getPheromones() {
+    return this.pheromones;
+  }
+
+  public void setPheromones(double pheromones) {
+    this.pheromones = pheromones;
   }
 }

@@ -4,7 +4,7 @@ import Individual.Individual;
 import Neurons.Neuron;
 
 public abstract class OutputNeuron extends Neuron {
-  public static int numOutputNeurons = 4;
+  public static int numOutputNeurons = 5;
 
   boolean firing = false;
 

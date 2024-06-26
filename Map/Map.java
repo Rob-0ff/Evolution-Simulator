@@ -15,11 +15,12 @@ import Neurons.inputNeurons.InputNeuron;
 import Neurons.outputNeurons.OutputNeuron;
 
 public class Map {
-  int xSize = 6;
-  int ySize = 6;
+  int xSize = 50;
+  int ySize = 50;
 
-  public static String individualRep = "\u26AB";
+  // public static String individualRep = "\u26AB";
   // public static String individualRep = "\u2022";
+  public static String individualRep = "\u2191";
 
   Cell[][] board = new Cell[xSize][ySize];
 
@@ -196,14 +197,26 @@ class Array2DPanel extends JPanel {
         int x = j * cellWidth;
         int y = i * cellHeight;
 
+        // Set default cell color
         g.setColor(Color.WHITE);
-        g.drawRect(x, y, cellWidth, cellHeight);
+
+        if (array[i][j].getPheromones() != 0) {
+          int intensity = (int) (255 * array[i][j].getPheromones());
+          intensity = Math.min(255, Math.max(0, intensity));
+          Color cellColor = new Color(0, 255, 0, intensity);
+
+          g.setColor(cellColor);
+        }
+
+        g.fillRect(x, y, cellWidth, cellHeight); // Fill the cell with color
+        g.setColor(Color.BLACK); // Set color for the border
+        g.drawRect(x, y, cellWidth, cellHeight); // Draw cell border
 
         if (array[i][j].getIndividual() != null) {
-          g.setColor(new Color(array[i][j].getIndividual().getRGB()[0], array[i][j].getIndividual().getRGB()[1],
-              array[i][j].getIndividual().getRGB()[1]));
-          g.drawString(Map.individualRep, x + cellWidth / 2 - 4,
-              y + cellHeight / 2 + 4);
+          g.setColor(new Color(array[i][j].getIndividual().getRGB()[0],
+              array[i][j].getIndividual().getRGB()[1],
+              array[i][j].getIndividual().getRGB()[2]));
+          g.drawString(Map.individualRep, x + cellWidth / 2 - 4, y + cellHeight / 2 + 4);
         } else {
           g.drawString(" ", x + cellWidth / 2 - 4, y + cellHeight / 2 + 4);
         }

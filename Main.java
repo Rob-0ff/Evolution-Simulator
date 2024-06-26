@@ -4,13 +4,14 @@ import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 
 import Individual.Individual;
-import Map.*;
+import Map.Cell;
+import Map.Map;
 
 public class Main {
-  static int numIndividuals = 16;
+  static int numIndividuals = 100;
   static Map map = new Map();
   static CyclicBarrier startingBarrier = new CyclicBarrier(numIndividuals);
-  static CyclicBarrier midpointBarrier = new CyclicBarrier(numIndividuals);
+  static CyclicBarrier midpointBarrier = new CyclicBarrier(numIndividuals, () -> midpointUpdates());
   static CyclicBarrier completedBarrier = new CyclicBarrier(numIndividuals, () -> {
     try {
       limitReached(map);
@@ -20,7 +21,7 @@ public class Main {
 
   public static void main(String[] args) throws InterruptedException, IOException {
 
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 500; i++) {
 
       System.out.println("---------- " + i + " ---------");
 
@@ -42,6 +43,8 @@ public class Main {
         ind.join();
       }
 
+      System.out.println(individuals.get(0).getAge());
+
       System.out.println("------------Restart--------------");
     }
   }
@@ -54,5 +57,15 @@ public class Main {
       e.printStackTrace();
     }
     map.clearIndividuals();
+  }
+
+  public static void midpointUpdates() {
+    for (Cell[] row : map.getBoard()) {
+      for (Cell cell : row) {
+        cell.setPheromones(cell.getPheromones() * 0.999);
+      }
+    }
+
+    // map.updatePanel();
   }
 }

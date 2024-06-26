@@ -1,17 +1,17 @@
 package Individual;
 
-import Neurons.inputNeurons.*;
-import Neurons.hiddenNeurons.*;
-import Neurons.outputNeurons.*;
-import Map.Cell;
-import Map.Map;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 import org.reflections.Reflections;
+
+import Map.Cell;
+import Map.Map;
+import Neurons.hiddenNeurons.HiddenNeuron;
+import Neurons.inputNeurons.InputNeuron;
+import Neurons.outputNeurons.OutputNeuron;
 
 public class Individual extends Thread {
   static int numSteps = 100;
@@ -52,11 +52,12 @@ public class Individual extends Thread {
 
   int[] RGB = new int[3];
   double health = 100;
+  int age = 0;
 
   static String[] hexLetters = new String[] { "A", "B", "C", "D", "E", "F" };
   static String[] hexDigits = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
-  static int connections = 15;
+  static int connections = 50;
 
   public Individual(Map map, CyclicBarrier startingBarrier, CyclicBarrier midpointBarrier,
       CyclicBarrier completedBarrier) {
@@ -98,8 +99,9 @@ public class Individual extends Thread {
       for (int i = 0; i < numSteps; i++) {
         brain.runBrain();
         brain.clearIntakes();
-        midpointBarrier.await();
+        this.age++;
         Thread.sleep(125);
+        midpointBarrier.await();
       }
       completedBarrier.await();
     } catch (InterruptedException e) {
@@ -152,6 +154,18 @@ public class Individual extends Thread {
     return this.currentCell;
   }
 
+  public void setHealth(double health) {
+    this.health = health;
+  }
+
+  public void setAge(int age) {
+    this.age = age;
+  }
+
+  public int getAge() {
+    return age;
+  }
+
   public void printBrain() {
     System.out.println(this.brain.toString());
   }
@@ -185,6 +199,27 @@ public class Individual extends Thread {
       }
     }
 
+  }
+
+  public ArrayList<Cell> getNeighbourhood() {
+    ArrayList<Cell> neighbourhood = new ArrayList<Cell>();
+
+    int x = currentCell.getX();
+    int y = currentCell.getY();
+
+    for (int i = -2; i < 3; i++) {
+      for (int j = -2; j < 3; j++) {
+        if (i == 0 && j == 0)
+          continue;
+        if (x + i < 0 || x + i >= map.getXSize())
+          continue;
+        if (y + j < 0 || y + j >= map.getYSize())
+          continue;
+        neighbourhood.add(map.getBoard()[x + i][y + j]);
+      }
+    }
+
+    return neighbourhood;
   }
 
   public ArrayList<InputNeuron> getInputNeurons() {
