@@ -1,55 +1,92 @@
 package Individual;
 
-import Neurons.Neuron;
-import Neurons.inputNeurons.*;
-import Neurons.outputNeurons.*;
-import Neurons.hiddenNeurons.*;
-import Neurons.Connection;
-
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
+import Neurons.Connection;
+import Neurons.Neuron;
+import Neurons.hiddenNeurons.HiddenNeuron;
+import Neurons.inputNeurons.InputNeuron;
+import Neurons.outputNeurons.OutputNeuron;
 public class Brain {
   Individual individual;
 
   public Brain(Individual individual) {
     this.individual = individual;
+    ArrayList<String> codonStringList = individual.getCodons();
+    ArrayList<Integer> codonNumberList = individual.getNumericCodons();
 
-    for (String codon : individual.getCodons()) {
+    for (int x = 0; x < codonStringList.size(); x++) {
+      String bin = String.format("%32s", new BigInteger(codonStringList.get(x), 16).toString(2)).replace(' ', '0');
+      String bin2 = String.format("%32s", Integer.toBinaryString(codonNumberList.get(x))).replace(' ', '0');
+      if (bin.compareTo(bin2) != 0) {
+        throw new IllegalArgumentException("Codon and Codon Number do not match: bin: " + bin + " bin2: " + bin2);
+      }
+    }
+    for (Integer codon : codonNumberList) {
       Neuron start = null;
       Neuron finish = null;
-      double weight;
+      // double weight;
 
-      int length = codon.length() * 4;
-      String bin = new BigInteger(codon, 16).toString(2);
-      bin = String.format("%" + length + "s", bin).replace(' ', '0');
+      int length = 32; // 32 bits
+      // String bin = new BigInteger(codon, 16).toString(2);
+      // bin = String.format("%" + length + "s", bin).replace(' ', '0');
 
-      String startNeuronType = bin.substring(0, 1);
-      String startNeuronSubClass = bin.substring(1, 6);
-      String finishNeuronType = bin.substring(6, 7);
-      String finishNeuronSubClass = bin.substring(7, 12);
-      String weightSign = bin.substring(12, 13);
-      String weightString = bin.substring(13);
+      // String startNeuronType = bin.substring(0, 1);
+      // String startNeuronSubClass = bin.substring(1, 6);
+      // String finishNeuronType = bin.substring(6, 7);
+      // String finishNeuronSubClass = bin.substring(7, 12);
+      // String weightSign = bin.substring(12, 13);
+      // String weightString = bin.substring(13);
 
-      if (startNeuronType.equals("0")) {
+
+      byte[] bytes = ByteBuffer.allocate(4).putInt(codon).array();
+      // Combine the first two bytes into a 2 byte unsigned short variable named `edge`
+      int edge = ((bytes[0] & 0xFF) << 8) | (bytes[1] & 0xFF);
+      // Extract the 16th bit of `edge` and store it in a boolean variable named `sType`
+      boolean sType = (edge & (1 << 15)) != 0;
+      // Extract bits 15-11 (5 bits) from `edge` and store in an unsigned short variable named `sNum`
+      int sNum = (edge >> 10) & 0x1F;
+      // Extract the 10th bit from `edge` and store in a boolean variable named `eType`
+      boolean eType = (edge & (1 << 9)) != 0;
+      // Extract bits 9-5 (5 bits) from `edge` and store in an unsigned short variable named `eNum`
+      int eNum = (edge >> 4) & 0x1F;
+      // Get sign of weight
+      int floatSignBit = ((bytes[1] & 0x8) << 28); // get last (4th) bit and shift to pos 32
+      // System.out.println("Sign: " + String.format("%32s", Integer.toBinaryString(floatSignBit)).replace(' ', '0'));
+
+      // Get 4 bit exponent from last three bits of byte 1 and first bit from byte 2
+      int floatExponent = (((bytes[1] << 1) & 0x7) | (bytes[2] >> 3)) & 0xF;
+      int minExponent = 115;
+      floatExponent += minExponent;
+      // System.out.println("Exponent: " + (floatExponent));
+      floatExponent = (floatExponent << 23);
+      // System.out.println("Exponent: " + String.format("%32s", Integer.toBinaryString(floatExponent)).replace(' ', '0'));
+      // Create a signed float in the following manner
+      int floatBits = ((bytes[1] & 0x7) << 16); // get everything but sign and shift to end
+      floatBits = floatBits | ((bytes[2] & 0xFF) << 8);
+      floatBits = floatBits | (bytes[3] & 0xFF);
+      floatBits = floatBits | floatSignBit;
+      floatBits = floatBits | floatExponent;
+      float weight = Float.intBitsToFloat(floatBits);
+  
+      // System.out.println("edge: " + String.format("%16s", Integer.toBinaryString(edge)).replace(' ', '0') + ", sType: " + sType + ", sNum: " + sNum + ", eType: " + eType + ", eNum: " + eNum);
+      // System.out.println("weight: " + weight);
+      if (sType == false) {
         start = individual.getInputNeurons()
-            .get(Integer.parseInt(startNeuronSubClass, 2) % InputNeuron.numInputNeurons);
+            .get((((int) sNum) & 0xF) % InputNeuron.numInputNeurons);
       } else {
         start = individual.getHiddenNeurons()
-            .get(Integer.parseInt(startNeuronSubClass, 2) % HiddenNeuron.numHiddenNeurons);
+            .get((((int) sNum) & 0xF) % HiddenNeuron.numHiddenNeurons);
       }
 
-      if (finishNeuronType.equals("0")) {
+      if (eType == false) {
         finish = individual.getHiddenNeurons()
-            .get(Integer.parseInt(finishNeuronSubClass, 2) % HiddenNeuron.numHiddenNeurons);
+            .get((((int) eNum) & 0xF) % HiddenNeuron.numHiddenNeurons);
       } else {
         finish = individual.getOutputNeurons()
-            .get(Integer.parseInt(finishNeuronSubClass, 2) % OutputNeuron.numOutputNeurons);
-      }
-
-      weight = Integer.parseInt(weightString, 2) / 100000.0;
-
-      if (weightSign.equals("0")) {
-        weight *= -1;
+            .get((((int) eNum) & 0xF) % OutputNeuron.numOutputNeurons);
       }
 
       start.getToNeurons().add(new Connection(finish, weight, true));

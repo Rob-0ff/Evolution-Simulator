@@ -19,6 +19,7 @@ public class Individual extends Thread {
   Iterator<Class<? extends HiddenNeuron>> hiddenIterator;
   Iterator<Class<? extends OutputNeuron>> outputIterator;
   Iterator<Class<? extends InputNeuron>> inputIterator;
+  static double hapsburgCoefficient = 0.1;
 
   public void setHiddenIterator(Iterator<Class<? extends HiddenNeuron>> hiddenIterator) {
     this.hiddenIterator = hiddenIterator;
@@ -34,6 +35,7 @@ public class Individual extends Thread {
 
   String DNA = "";
   ArrayList<String> codonArrayList = new ArrayList<String>();
+  ArrayList<Integer> codonNumberArrayList = new ArrayList<Integer>();
   CyclicBarrier completedBarrier;
   CyclicBarrier startingBarrier;
   CyclicBarrier midpointBarrier;
@@ -55,8 +57,8 @@ public class Individual extends Thread {
   int age = 0;
   int orientation = 4;
 
-  static String[] hexLetters = new String[] { "A", "B", "C", "D", "E", "F" };
-  static String[] hexDigits = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+  static String[] hexDigits = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E",
+      "F" };
 
   static int connections = 50;
 
@@ -67,11 +69,21 @@ public class Individual extends Thread {
     this.midpointBarrier = midpointBarrier;
 
     this.map = map;
+    int randomIndex = 0;
+    int codonNumber = 0;
+    Integer codon = 0;
     for (int i = 0; i < 8 * connections; i++) {
-      if (Math.random() < 0.5)
-        DNA += hexDigits[(int) (Math.random() * 10)];
-      else {
-        DNA += hexLetters[(int) (Math.random() * 6)];
+      // generate random number between 0 and 15
+      // * 16, because type coercion floors instead of rounds
+      randomIndex = (int) (Math.random() * 16);
+      DNA += hexDigits[randomIndex];
+      // codonNumberArrayList.add(randomIndex);
+      codon = codon | ((randomIndex & 0xF) << (28 - (codonNumber % 8) * 4));
+
+      ++codonNumber;
+      if (codonNumber % 8 == 0) {
+        codonNumberArrayList.add(codon);
+        codon = 0;
       }
     }
 
@@ -93,7 +105,43 @@ public class Individual extends Thread {
     brain = new Brain(this);
   }
 
-  // Getters and setters
+  // Copy constructor
+  public Individual(Individual urMum) {
+    this.completedBarrier = urMum.completedBarrier;
+    this.startingBarrier = urMum.startingBarrier;
+    this.midpointBarrier = urMum.midpointBarrier;
+
+    this.map = urMum.map;
+    this.DNA = urMum.DNA;
+
+    convertDNAToRGB();
+
+    for (int i = 0; i < urMum.codonNumberArrayList.size(); ++i) {
+      codonNumberArrayList.add(urMum.codonNumberArrayList.get(i));
+    }
+    mootate();
+    Reflections hiddenReflections = new Reflections("Neurons.hiddenNeurons");
+    Reflections inputReflections = new Reflections("Neurons.inputNeurons");
+    Reflections outputReflections = new Reflections("Neurons.outputNeurons");
+
+    setHiddenIterator(hiddenReflections.getSubTypesOf(HiddenNeuron.class).iterator());
+    setInputIterator(inputReflections.getSubTypesOf(InputNeuron.class).iterator());
+    setOutputIterator(outputReflections.getSubTypesOf(OutputNeuron.class).iterator());
+
+    intiateNeuronLists();
+    brain = new Brain(this);
+  }
+
+  private void mootate() {
+    if (Math.random() > hapsburgCoefficient) {
+      return;
+    }
+    int mutationCodon = (int) (Math.random() * codonNumberArrayList.size());
+    int mutationBit = (int) (Math.random() * 31);
+    int mutationMask = 1 << mutationBit;
+    // XOR the bit with the mask to flip it
+    codonNumberArrayList.set(mutationCodon, codonNumberArrayList.get(mutationCodon) ^ mutationMask);
+  }
 
   public String getDNA() {
     return DNA;
@@ -101,6 +149,10 @@ public class Individual extends Thread {
 
   public ArrayList<String> getCodons() {
     return codonArrayList;
+  }
+
+  public ArrayList<Integer> getNumericCodons() {
+    return codonNumberArrayList;
   }
 
   public int getXPosition() {
@@ -240,9 +292,8 @@ public class Individual extends Thread {
       for (int i = 0; i < numSteps; i++) {
         brain.runBrain();
         brain.clearIntakes();
-        this.age++;
-        Thread.sleep(125);
         midpointBarrier.await();
+        Thread.sleep(125);
       }
       completedBarrier.await();
     } catch (InterruptedException e) {
@@ -261,5 +312,15 @@ public class Individual extends Thread {
     RGB[0] = Integer.parseInt(rHex, 16);
     RGB[1] = Integer.parseInt(gHex, 16);
     RGB[2] = Integer.parseInt(bHex, 16);
+  }
+
+  public double getFitness() {
+    // TODO: Implement properly
+    return 0;
+  }
+
+  public double getFitness() {
+    // TODO: Implement properly
+    return 0;
   }
 }

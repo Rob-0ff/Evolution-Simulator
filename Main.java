@@ -42,9 +42,13 @@ public class Main {
       for (Individual ind : individuals) {
         ind.join();
       }
-
-      System.out.println(individuals.get(0).getOrientation());
-
+      for (Individual ind : individuals) {
+        if (ind.getFitness() > 0) {
+          // TODO: the nasty
+        } else {
+          // TODO: remove
+        }
+      }
       System.out.println("------------Restart--------------");
     }
   }
