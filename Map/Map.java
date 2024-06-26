@@ -2,10 +2,14 @@ package Map;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
@@ -20,7 +24,9 @@ public class Map {
 
   // public static String individualRep = "\u26AB";
   // public static String individualRep = "\u2022";
-  public static String individualRep = "\u2191";
+  public static String[] individualRep = { "\u2191", "\u2197", "\u2192", "\u2198", "\u2193", "\u2199", "\u2190",
+      "\u2196" };
+  // public static String individualRep = "\u2191";
 
   Cell[][] board = new Cell[xSize][ySize];
 
@@ -216,7 +222,9 @@ class Array2DPanel extends JPanel {
           g.setColor(new Color(array[i][j].getIndividual().getRGB()[0],
               array[i][j].getIndividual().getRGB()[1],
               array[i][j].getIndividual().getRGB()[2]));
-          g.drawString(Map.individualRep, x + cellWidth / 2 - 4, y + cellHeight / 2 + 4);
+          g.setFont(g.getFont().deriveFont(Font.BOLD));
+          g.drawString(Map.individualRep[array[i][j].getIndividual().getOrientation()], x + cellWidth / 2 - 4,
+              y + cellHeight / 2 + 4);
         } else {
           g.drawString(" ", x + cellWidth / 2 - 4, y + cellHeight / 2 + 4);
         }

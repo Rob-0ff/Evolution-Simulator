@@ -43,7 +43,7 @@ public class Main {
         ind.join();
       }
 
-      System.out.println(individuals.get(0).getAge());
+      System.out.println(individuals.get(0).getOrientation());
 
       System.out.println("------------Restart--------------");
     }
@@ -62,7 +62,7 @@ public class Main {
   public static void midpointUpdates() {
     for (Cell[] row : map.getBoard()) {
       for (Cell cell : row) {
-        cell.setPheromones(cell.getPheromones() * 0.999);
+        cell.setPheromones(cell.getPheromones() * 0.8);
       }
     }
 

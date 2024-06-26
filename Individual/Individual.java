@@ -53,6 +53,7 @@ public class Individual extends Thread {
   int[] RGB = new int[3];
   double health = 100;
   int age = 0;
+  int orientation = 0;
 
   static String[] hexLetters = new String[] { "A", "B", "C", "D", "E", "F" };
   static String[] hexDigits = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -92,35 +93,7 @@ public class Individual extends Thread {
     brain = new Brain(this);
   }
 
-  @Override
-  public void run() {
-    try {
-      startingBarrier.await();
-      for (int i = 0; i < numSteps; i++) {
-        brain.runBrain();
-        brain.clearIntakes();
-        this.age++;
-        Thread.sleep(125);
-        midpointBarrier.await();
-      }
-      completedBarrier.await();
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      e.printStackTrace();
-    } catch (BrokenBarrierException e) {
-      e.printStackTrace();
-    }
-  }
-
-  private void convertDNAToRGB() {
-    String rHex = DNA.substring(0, 2);
-    String gHex = DNA.substring(2, 4);
-    String bHex = DNA.substring(4, 6);
-
-    RGB[0] = Integer.parseInt(rHex, 16);
-    RGB[1] = Integer.parseInt(gHex, 16);
-    RGB[2] = Integer.parseInt(bHex, 16);
-  }
+  // Getters and setters
 
   public String getDNA() {
     return DNA;
@@ -174,6 +147,40 @@ public class Individual extends Thread {
     return connections;
   }
 
+  public ArrayList<InputNeuron> getInputNeurons() {
+    return inputNeurons;
+  }
+
+  public ArrayList<HiddenNeuron> getHiddenNeurons() {
+    return hiddenNeurons;
+  }
+
+  public ArrayList<OutputNeuron> getOutputNeurons() {
+    return outputNeurons;
+  }
+
+  public Brain getBrain() {
+    return this.brain;
+  }
+
+  public Map getMap() {
+    return this.map;
+  }
+
+  public void setMap(Map map) {
+    this.map = map;
+  }
+
+  public int getOrientation() {
+    return orientation;
+  }
+
+  public void setOrientation(int orientation) {
+    this.orientation = orientation;
+  }
+
+  // Additional methods
+
   public void intiateNeuronLists() {
     while (inputIterator.hasNext()) {
       try {
@@ -222,27 +229,33 @@ public class Individual extends Thread {
     return neighbourhood;
   }
 
-  public ArrayList<InputNeuron> getInputNeurons() {
-    return inputNeurons;
+  @Override
+  public void run() {
+    try {
+      startingBarrier.await();
+      for (int i = 0; i < numSteps; i++) {
+        brain.runBrain();
+        brain.clearIntakes();
+        this.age++;
+        Thread.sleep(125);
+        midpointBarrier.await();
+      }
+      completedBarrier.await();
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      e.printStackTrace();
+    } catch (BrokenBarrierException e) {
+      e.printStackTrace();
+    }
   }
 
-  public ArrayList<HiddenNeuron> getHiddenNeurons() {
-    return hiddenNeurons;
-  }
+  private void convertDNAToRGB() {
+    String rHex = DNA.substring(0, 2);
+    String gHex = DNA.substring(2, 4);
+    String bHex = DNA.substring(4, 6);
 
-  public ArrayList<OutputNeuron> getOutputNeurons() {
-    return outputNeurons;
-  }
-
-  public Brain getBrain() {
-    return this.brain;
-  }
-
-  public Map getMap() {
-    return this.map;
-  }
-
-  public void setMap(Map map) {
-    this.map = map;
+    RGB[0] = Integer.parseInt(rHex, 16);
+    RGB[1] = Integer.parseInt(gHex, 16);
+    RGB[2] = Integer.parseInt(bHex, 16);
   }
 }
