@@ -46,39 +46,25 @@ public class ForwardPheromoneGradient extends InputNeuron {
           break;
       }
 
-      // if (individual == individual.getMap().getIndividuals().get(0))
-      // System.out.println("New: " + newX + ", " + newY);
       if (individual.getMap().isValidCell(newX, newY)) {
         forwardCells.add(individual.getMap().getBoard()[newX][newY]);
       }
     }
 
-    if (forwardCells.size() == 0.0) {
+    if (forwardCells.size() == 0) {
       return Double.MIN_VALUE; // TODO - check if this is handled correctly
     }
 
     double pheromoneGradient = individual.getCell().getPheromones();
+    double sumPheromones = 0;
 
     for (Cell cell : forwardCells) {
-      pheromoneGradient -= cell.getPheromones();
-
-      // if (individual == individual.getMap().getIndividuals().get(0)) {
-      // System.out.println("(" + cell.getX() + "," + cell.getY() + ") - " +
-      // cell.getPheromones());
-      // }
-
+      sumPheromones -= cell.getPheromones();
     }
 
-    // if (individual == individual.getMap().getIndividuals().get(0)) {
-    // System.out.println("Gradient: " + pheromoneGradient);
-    // System.out.println("Current: " + individual.getXPosition() + ", " +
-    // individual.getYPosition());
-    // System.out.println("Size: " + forwardCells.size());
-    // System.out.println("O: " + individual.getOrientation() +
-    // "\n--------------------");
-    // }
+    double avgPheromone = sumPheromones / forwardCells.size();
 
-    return pheromoneGradient / 3;
+    return pheromoneGradient - avgPheromone;
   }
 
   public void action() {

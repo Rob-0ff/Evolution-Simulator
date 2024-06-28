@@ -51,13 +51,20 @@ public class LeftPheromoneGradient extends InputNeuron {
       }
     }
 
-    double pheromoneGradient = individual.getCell().getPheromones();
-
-    for (Cell cell : leftwardCells) {
-      pheromoneGradient -= cell.getPheromones();
+    if (leftwardCells.size() == 0) {
+      return Double.MIN_VALUE; // TODO - check if this is handled correctly
     }
 
-    return pheromoneGradient;
+    double pheromoneGradient = individual.getCell().getPheromones();
+    double sumPheromones = 0;
+
+    for (Cell cell : leftwardCells) {
+      sumPheromones -= cell.getPheromones();
+    }
+
+    double avgPheromone = sumPheromones / leftwardCells.size();
+
+    return pheromoneGradient - avgPheromone;
   }
 
   public void action() {
