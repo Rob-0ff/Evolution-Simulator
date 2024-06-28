@@ -60,7 +60,7 @@ public class Individual extends Thread {
   static String[] hexDigits = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E",
       "F" };
 
-  static int connections = 50;
+  static int connections = 5;
 
   public Individual(Map map, CyclicBarrier startingBarrier, CyclicBarrier midpointBarrier,
       CyclicBarrier completedBarrier) {
@@ -312,11 +312,6 @@ public class Individual extends Thread {
     RGB[0] = Integer.parseInt(rHex, 16);
     RGB[1] = Integer.parseInt(gHex, 16);
     RGB[2] = Integer.parseInt(bHex, 16);
-  }
-
-  public double getFitness() {
-    // TODO: Implement properly
-    return 0;
   }
 
   public double getFitness() {
