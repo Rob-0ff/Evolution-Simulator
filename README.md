@@ -58,6 +58,7 @@ and placed within the network to be used by any connection.
 
 Here is a video showing the initial population once created.
 
-<video width="320" height="240" controls>
-  <source src="README files/Initial population.mp4" type="video/mp4">
-</video>
+https://github.com/user-attachments/assets/5c7348c5-6fcc-4ac1-8a75-ce68efe272d7
+
+
+
