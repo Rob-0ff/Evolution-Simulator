@@ -60,7 +60,7 @@ public class Individual extends Thread {
   static String[] hexDigits = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E",
       "F" };
 
-  static int connections = 5;
+  static int connections = 10;
 
   public Individual(Map map, CyclicBarrier startingBarrier, CyclicBarrier midpointBarrier,
       CyclicBarrier completedBarrier) {
