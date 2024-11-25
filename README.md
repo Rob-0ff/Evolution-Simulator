@@ -54,6 +54,11 @@ and placed within the network to be used by any connection.
 - Turn right
 - Drop pheromones
 
+# Evolution
+
+The evolution of the population works similar to a Genetic Algorithm. In this simulation, an the DNA of an individual is item to which evolutionary techniques are applied to. This simulation 
+makes use of crossover (not implemented) and mutation (not implemented) in order to generate the following populations.
+
 # Initial population
 
 Here is a video showing the initial population once created.
