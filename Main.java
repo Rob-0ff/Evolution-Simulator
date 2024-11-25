@@ -8,7 +8,7 @@ import Map.Cell;
 import Map.Map;
 
 public class Main {
-  static int numIndividuals = 100;
+  static int numIndividuals = 140;
   static Map map = new Map();
   static CyclicBarrier startingBarrier = new CyclicBarrier(numIndividuals);
   static CyclicBarrier midpointBarrier = new CyclicBarrier(numIndividuals, () -> midpointUpdates());
@@ -66,7 +66,7 @@ public class Main {
   public static void midpointUpdates() {
     for (Cell[] row : map.getBoard()) {
       for (Cell cell : row) {
-        cell.setPheromones(cell.getPheromones() * 0.8);
+        cell.setPheromones(cell.getPheromones() * 0.95);
       }
     }
 

@@ -5,11 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
@@ -22,11 +19,8 @@ public class Map {
   int xSize = 50;
   int ySize = 50;
 
-  // public static String individualRep = "\u26AB";
-  // public static String individualRep = "\u2022";
   public static String[] individualRep = { "\u2193", "\u2199", "\u2190",
       "\u2196", "\u2191", "\u2197", "\u2192", "\u2198" };
-  // public static String individualRep = "\u2191";
 
   Cell[][] board = new Cell[xSize][ySize];
 
@@ -79,6 +73,9 @@ public class Map {
       }
     }
 
+    if (individuals.size() == 1)
+      ((Array2DPanel) panel).addFirst(individual);
+
     ((Array2DPanel) panel).updateArray();
 
   }
@@ -117,6 +114,10 @@ public class Map {
   public void updatePanel() {
     ((Array2DPanel) panel).updateArray();
     ((InfoPanel) infoPanel).updatePanel();
+  }
+
+  public boolean isValidCell(int x, int y) {
+    return x >= 0 && x < xSize && y >= 0 && y < ySize;
   }
 }
 
@@ -178,6 +179,7 @@ class InfoPanel extends JPanel {
 
 class Array2DPanel extends JPanel {
   private Cell[][] array;
+  private Individual first;
 
   public Array2DPanel(Cell[][] array) {
     this.array = array;
@@ -240,5 +242,9 @@ class Array2DPanel extends JPanel {
 
   public void updateArray() {
     repaint();
+  }
+
+  public void addFirst(Individual individual) {
+    first = individual;
   }
 }
